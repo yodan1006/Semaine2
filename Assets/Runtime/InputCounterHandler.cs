@@ -21,7 +21,7 @@ public class InputCounterHandler : MonoBehaviour
 
 }
 
-public class CountEventArgs
+public class CountEventArgs : EventArgs
 {
     public int count;
 }
