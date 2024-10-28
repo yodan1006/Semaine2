@@ -1,20 +1,34 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MyBeautifullCanvas : MonoBehaviour
 {
-    [SerializeField] string _textview;
     [SerializeField] TextMeshProUGUI _monBeauText;
-    [SerializeField] Button _onClick;
+    //[SerializeField] Button _onClick;
+    [SerializeField] InputCounter _counter;
 
-    private void Start()
+    //private void Update()
+    //{
+    //    _monBeauText.SetText($"{_counter}");
+    //}
+
+    private void OnEnable()
     {
-        //_monBeauText.text = _textview;
-        SetText(_textview);
-        _onClick.onClick.AddListener(DebugText);
+        _counter._onKeyDown += OnKeyDownEventHandler;   
+    }
+    private void OnDisable()
+    {
+        _counter._onKeyDown -= OnKeyDownEventHandler;
     }
 
-    public void SetText(string text) => _monBeauText.text = text;
-    public void DebugText() => Debug.Log("tu as appeler" + _monBeauText);
+    private void OnKeyDownEventHandler(int value)
+    {
+        SetText(value.ToString());
+    }
+
+    public void SetText(string text) {
+        
+        _monBeauText.text = text; 
+    }
+    //public void DebugText() => Debug.Log("tu as appeler" + _monBeauText);
 }
