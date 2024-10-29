@@ -1,13 +1,13 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Generator : MonoBehaviour
+public class GeneratorCircle : MonoBehaviour
 {
     [SerializeField] int numberItem;
     [SerializeField] GameObject wathObject;
-    [SerializeField] Vector3 objectMinArea = new Vector3(-10, 0, -10);
-    [SerializeField] Vector3 objectMaxArea = new Vector3(10, 10, 10);
+    [SerializeField] float circleRadius = 10f; // Rayon du cercle
     [SerializeField] UnityEvent destruction;
 
     private List<GameObject> items = new List<GameObject>();
@@ -23,19 +23,16 @@ public class Generator : MonoBehaviour
         if (destruction == null)
             destruction = new UnityEvent();
 
-        // Ajouter l'écouteur d'événement pour générer un seul nouvel item après destruction
-        destruction.AddListener(GenerateNewItem);
+        destruction.AddListener(GenerateNew);
 
-        // Génère les items initiaux
         GenerateItems();
     }
 
     private void GenerateItems()
     {
-        // Génère exactement `numberItem` items une seule fois au début
         for (int i = 0; i < numberItem; i++)
         {
-            GenerateNewItem();
+            GenerateNewItem(i);
         }
     }
 
@@ -47,15 +44,25 @@ public class Generator : MonoBehaviour
         }
     }
 
-    private void GenerateNewItem()
+    private void GenerateNew()
     {
-        Vector3 randomPosition = new Vector3(
-            Random.Range(objectMinArea.x, objectMaxArea.x),
-            Random.Range(objectMinArea.y, objectMaxArea.y),
-            Random.Range(objectMinArea.z, objectMaxArea.z)
+        GenerateNewItem(items.Count);
+    }
+
+    private void GenerateNewItem(int index = -1)
+    {
+        float angle = Random.Range(0f, 360f);
+        float radians = angle * Mathf.Deg2Rad;
+
+        // Calcule la position aléatoire sur le cercle
+        Vector3 position = new Vector3(
+            Mathf.Cos(radians) * circleRadius,
+            0,
+            Mathf.Sin(radians) * circleRadius
         );
 
-        GameObject newObject = Instantiate(wathObject, randomPosition, Quaternion.identity);
+        // Instancie le nouvel objet à la position calculée
+        GameObject newObject = Instantiate(wathObject, position, Quaternion.identity);
         items.Add(newObject);
     }
 
@@ -67,7 +74,6 @@ public class Generator : MonoBehaviour
             items.Remove(itemToDestroy);
             Destroy(itemToDestroy);
 
-            // Invoque l'événement de destruction pour créer un nouveau cube
             destruction.Invoke();
         }
     }
